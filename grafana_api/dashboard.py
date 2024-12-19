@@ -21,9 +21,11 @@ class Dashboard:
 
     def create_or_update_dashboard(
         self,
-        dashboard_path: str,
         dashboard_json: dict,
         message: str,
+        dashboard_path: str = None,
+        folder_id: int = None,
+        folder_uid: str = None,
         overwrite: bool = False,
     ):
         """The method includes a functionality to create the specified dashboard
@@ -41,15 +43,17 @@ class Dashboard:
         Returns:
             None
         """
+        if dashboard_path and not (folder_id or folder_uid):
+            folder_id = Folder(self.grafana_api_model).get_folder_id_by_dashboard_path(
+                dashboard_path
+            )
 
-        if len(dashboard_path) != 0 and dashboard_json != dict() and len(message) != 0:
-            folder_id: int = Folder(
-                self.grafana_api_model
-            ).get_folder_id_by_dashboard_path(dashboard_path)
+        if (folder_id or folder_uid) and dashboard_json != dict() and len(message) != 0:
 
             dashboard_json_complete: dict = {
                 "dashboard": dashboard_json,
                 "folderId": folder_id,
+                "folderUid": folder_uid,  # if folder_id is also specified, this takes precedense
                 "message": message,
                 "overwrite": overwrite,
             }

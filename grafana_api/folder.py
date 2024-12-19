@@ -96,7 +96,7 @@ class Folder:
             logging.error("There is no folder id defined.")
             raise ValueError
 
-    def create_folder(self, title: str, uid: str = None) -> dict:
+    def create_folder(self, title: str, uid: str = None, parentUid: str = None) -> dict:
         """The method includes a functionality to create a new folder inside the organization specified by the defined title and the optional uid
 
         Args:
@@ -117,6 +117,9 @@ class Folder:
 
             if uid is not None and len(uid) != 0:
                 folder_information.update({"uid": uid})
+
+            if uid is not None and len(parentUid) != 0:
+                folder_information.update({"parentUid": parentUid})
 
             api_call: dict = Api(self.grafana_api_model).call_the_api(
                 APIEndpoints.FOLDERS.value,
